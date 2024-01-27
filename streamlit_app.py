@@ -12,29 +12,25 @@ forums](https://discuss.streamlit.io).
 
 In the meantime, below is an example of what you can do with just a few lines of code:
 """
+def compound_interest(principal, rate, time):
+    return principal * (1 + rate / 100) ** time
 
-num_points = st.slider("Number of points in spiral", 1, 10000, 1100)
-num_turns = st.slider("Number of turns in spiral", 1, 300, 31)
+def main():
+    st.title("Compound Interest Calculator")
 
-indices = np.linspace(0, 1, num_points)
-theta = 2 * np.pi * num_turns * indices
-radius = indices
+    principal = st.number_input("Enter principal amount:")
+    rate = st.number_input("Enter annual interest rate:")
+    time = st.number_input("Enter time in years:")
 
-x = radius * np.cos(theta)
-y = radius * np.sin(theta)
+    result = compound_interest(principal, rate, time)
 
-df = pd.DataFrame({
-    "x": x,
-    "y": y,
-    "idx": indices,
-    "rand": np.random.randn(num_points),
-})
+    st.write(f"Compound Interest after {time} years: ${result - principal:.2f}")
 
-st.altair_chart(alt.Chart(df, height=700, width=700)
-    .mark_point(filled=True)
-    .encode(
-        x=alt.X("x", axis=None),
-        y=alt.Y("y", axis=None),
-        color=alt.Color("idx", legend=None, scale=alt.Scale()),
-        size=alt.Size("rand", legend=None, scale=alt.Scale(range=[1, 150])),
-    ))
+    # Visualization
+    years = np.arange(1, time + 1)
+    amounts = principal * (1 + rate / 100) ** years
+
+    st.line_chart(list(zip(years, amounts)))
+
+if __name__ == "__main__":
+    main()
